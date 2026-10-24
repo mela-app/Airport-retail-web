@@ -17,20 +17,9 @@ COPY src src
 RUN pnpm build
 
 # ---- runtime: static files + reverse proxy ---------------------------------------------------------------------
-FROM caddy:2.11.6-alpine@sha256:d44355d3c2149dc580ce2cac735955d1c08d3d00882c30489c241aa51a5c10d9 AS runtime
-# Caddy runs as a non-root user with every capability dropped and no-new-privileges. Docker lets unprivileged
-# processes bind ports 80 and 443 inside a container (net.ipv4.ip_unprivileged_port_start=0, the default since
-# Docker 20.10 and set explicitly in the compose files), so the binary is copied without its file capability
-# (cap_net_bind_service), which no-new-privileges would refuse to execute.
-RUN install -m 0755 /usr/bin/caddy /usr/local/bin/caddy && rm /usr/bin/caddy \
-    && addgroup -S web && adduser -S -G web -H -h /data web \
-    && mkdir -p /data /config \
-    && chown web:web /data /config
-COPY Caddyfile /etc/caddy/Caddyfile
-COPY --from=build /app/dist /srv
-ENV XDG_DATA_HOME=/data \
-    XDG_CONFIG_HOME=/config
-USER web
-EXPOSE 80 443
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD ["nc", "-z", "127.0.0.1", "80"]
-CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+FROM nginxinc/nginx-unprivileged:1.29-alpine
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html/web
+EXPOSE 8080
+HEALTHCHECK --interval=15s --timeout=5s --retries=3 \
+    CMD wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1

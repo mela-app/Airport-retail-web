@@ -30,23 +30,6 @@
   background: var(--brand-accent);
   color: var(--brand-accent-ink);
 }
-.claim__lang {
-  display: inline-flex;
-  gap: 2px;
-}
-.claim__lang button {
-  min-height: 32px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: #c3c2b7;
-}
-.claim__lang button.is-active {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  font-weight: 650;
-}
 .claim__main {
   flex: 1;
   width: 100%;

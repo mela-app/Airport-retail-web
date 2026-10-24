@@ -1,11 +1,12 @@
 /** The top bar: brand, role switcher, language, split-screen toggle, API docs and the live indicator. */
 import { useAppConfig } from '../app/config';
 import { ROLES, resolveRoute, roleLabel } from '../app/roles';
-import { LANGUAGES, useI18n } from '../i18n';
+import { useI18n } from '../i18n';
 import { useLiveStatus } from '../lib/live';
 import { hrefOf, useLocation, useNavigate } from '../lib/router';
 import { Button } from '../ui/controls';
 import { Icon } from '../ui/icon';
+import { LanguageMenu } from './language-menu';
 import { roleHome } from './role-view';
 import { DEFAULT_LEFT, DEFAULT_RIGHT } from './split-view';
 
@@ -19,7 +20,7 @@ export function Header({
   demoOpen: boolean;
 }) {
   const { brand } = useAppConfig();
-  const { t, lang, setLang } = useI18n();
+  const { t } = useI18n();
   const location = useLocation();
   const navigate = useNavigate();
   const current = split ? undefined : resolveRoute(location.path)?.role.id;
@@ -82,21 +83,7 @@ export function Header({
           >
             {t('demo.guide.open')}
           </Button>
-          <div className="lang" role="group" aria-label={t('shell.header.language')}>
-            <Icon name="globe" size={16} />
-            {LANGUAGES.map((l) => (
-              <button
-                key={l.id}
-                type="button"
-                lang={l.id}
-                className={l.id === lang ? 'lang__item is-active' : 'lang__item'}
-                aria-pressed={l.id === lang}
-                onClick={() => setLang(l.id)}
-              >
-                {l.label}
-              </button>
-            ))}
-          </div>
+          <LanguageMenu />
           <Button variant="ghost" icon="split" onClick={split ? exitSplit : enterSplit} aria-pressed={split}>
             {split ? t('shell.header.exitSplit') : t('shell.header.split')}
           </Button>

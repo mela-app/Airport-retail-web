@@ -458,6 +458,10 @@ textarea.input {
 .popover__panel--end {
   inset-inline-end: 0;
 }
+.popover__panel--menu {
+  min-width: 200px;
+  padding: 6px;
+}
 
 /* ---- toasts --------------------------------------------------------------------------------------------- */
 .toasts {

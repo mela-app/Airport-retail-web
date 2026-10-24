@@ -7,10 +7,13 @@
  *   API_PROXY_TARGET   where the backend listens (default http://127.0.0.1:3000)
  *   WEB_PORT           port of this server (default 5173)
  *   ALLOWED_HOSTS      extra host names the server answers to, comma-separated (e.g. arm.example.com), or
- *                      "all"; localhost and IP addresses are always allowed
+ *                      "all"; localhost, IP addresses and the playground's domain are always allowed
  */
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
+
+/** The public playground's domain. */
+const PLAYGROUND_HOSTS = ['airportweb.kefta-ticket.com'];
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
@@ -18,7 +21,16 @@ export default defineConfig(({ mode }) => {
   const webPort = Number(env.WEB_PORT || '5173');
   const proxy = { '/api': { target } };
   const hosts = (env.ALLOWED_HOSTS ?? '').trim();
-  const allowedHosts = hosts === 'all' ? true : hosts ? hosts.split(',').map((h) => h.trim()) : undefined;
+  const allowedHosts =
+    hosts === 'all'
+      ? true
+      : [
+          ...PLAYGROUND_HOSTS,
+          ...hosts
+            .split(',')
+            .map((h) => h.trim())
+            .filter(Boolean),
+        ];
   return {
     plugins: [react()],
     server: { host: true, port: webPort, strictPort: true, proxy, allowedHosts },

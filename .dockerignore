@@ -4,9 +4,10 @@
 .git
 .github
 .scan
-deploy
+.tools
 test
 scripts
+docs
 *.md
 .env
 .env.*

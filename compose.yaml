@@ -1,6 +1,12 @@
-# Local run: start the backend stack first (its repository: `docker compose up`), then `docker compose up` here
-# → http://localhost:8080. The web container joins the backend's `arm-edge` network and forwards /api to
-# `api:8080`. Production uses deploy/compose.yaml (the published image on ports 80 and 443).
+# One command: `docker compose up -d --build` → http://localhost:8080
+#
+# Start the backend first (its repository: `docker compose up -d --build`): this container joins the backend's
+# `arm-net` network and forwards /api to it as `api:8080`.
+#
+# Optional settings, in a .env file next to this one:
+#   WEB_HOST_PORT=8080       host port of the web app
+#   BIND_ADDRESS=0.0.0.0     also reachable from the LAN (phones following a screen's QR code)
+#   ALLOWED_HOSTS=arm.example.com   when the app is opened under a domain name (behind your own web server)
 name: arm-web
 
 services:
@@ -8,32 +14,24 @@ services:
     build: .
     image: arm-web:local
     environment:
-      API_UPSTREAM: api:8080
+      API_PROXY_TARGET: http://api:8080
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-}
     ports:
-      - target: 80
-        published: '8080'
+      - target: 8080
+        published: ${WEB_HOST_PORT:-8080}
         host_ip: ${BIND_ADDRESS:-127.0.0.1}
-    volumes:
-      - caddy-data:/data
-      - caddy-config:/config
     read_only: true
     tmpfs:
       - /tmp
     cap_drop:
       - ALL
-    sysctls:
-      net.ipv4.ip_unprivileged_port_start: 0
     security_opt:
       - no-new-privileges:true
     networks:
-      - edge
+      - arm-net
     restart: unless-stopped
 
-volumes:
-  caddy-data:
-  caddy-config:
-
 networks:
-  edge:
-    name: arm-edge
+  arm-net:
+    name: arm-net
     external: true

@@ -10,14 +10,14 @@ outlets and places. No personal data: every audience figure is an aggregate.
 
 The platform is two repositories (`backend/` and `frontend/`, side by side in `Airport-Retail-Media/`) with no code in common; they meet only over HTTP:
 
-| Repository              | What it is                                                                                    |
-| ----------------------- | --------------------------------------------------------------------------------------------- |
-| **backend**             | Adapters, simulation, presence model, decision engine, analytics; REST + SSE API (NestJS)     |
-| **frontend** (this one) | The web app (React): five roles, simulation bar, split screen, phone claim page; Caddy server |
+| Repository              | What it is                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------------- |
+| **backend**             | Adapters, simulation, presence model, decision engine, analytics; REST + SSE API (NestJS) |
+| **frontend** (this one) | The web app (React): five roles, simulation bar, split screen, phone claim page           |
 
-The server in this repository's image (Caddy) serves the app and forwards `/api` (REST and the live event
-stream) to the backend, so the browser sees one origin: no CORS, and QR claim links work wherever the page is
-opened.
+The app calls the backend on its own origin under `/api` (REST and the live event stream): the Vite dev server
+forwards it in development, and the web server that hosts the build does in production (see
+[Hosting](#hosting)). No CORS, and QR claim links work wherever the page is opened.
 
 **Playground:** _URL to be added after deployment_
 
@@ -39,19 +39,22 @@ opened.
 
 ## Run it
 
-Start the backend first (its repository: `docker compose up --build`, API on port 3000).
+Start the backend first (its repository: `docker compose up -d --build`, or `pnpm --filter @arm/api dev`; API on
+port 3000).
 
-**Docker:**
+**With Docker (one command):**
 
 ```bash
-docker compose up --build        # → http://localhost:8080
+docker compose up -d --build      # → http://localhost:8080
 ```
 
-The container joins the backend's `arm-edge` Docker network and forwards `/api` to `api:8080`. To scan promo
-QR codes from a phone on the same Wi-Fi, create a `.env` next to `compose.yaml` with `BIND_ADDRESS=0.0.0.0`
-and open the app on the computer's LAN address.
+The container serves the built app with Vite's preview server and forwards `/api` to the backend's container
+(`api:8080` on the `arm-net` network that the backend's `docker compose` creates). Optional settings go in a
+`.env` file next to `compose.yaml`: `WEB_HOST_PORT` (host port, default 8080), `BIND_ADDRESS=0.0.0.0` (reachable
+from phones on the LAN), `ALLOWED_HOSTS` (domain names, when opened under a domain). Stop it with
+`docker compose down`.
 
-**Development** (Node.js 22+, pnpm 11 via `corepack enable`):
+**Locally** (Node.js 22+, pnpm 11 via `corepack enable`):
 
 ```bash
 pnpm install
@@ -60,6 +63,10 @@ pnpm test
 ```
 
 `API_PROXY_TARGET` and `WEB_PORT` (see [.env.example](.env.example)) change the backend address and the port.
+The dev server is also on the LAN, so a phone on the same Wi-Fi can follow a screen's QR code.
+
+**Production build:** `pnpm build` writes the static app to `dist/`; `pnpm preview` serves it on port 5173
+with the same `/api` forwarding.
 
 ## What each role can do
 
@@ -92,19 +99,18 @@ side by side under one clock.
   key). Arabic switches the whole layout to right to left; numbers use Latin digits. Times are always airport
   time (UTC+04:00).
 - **White label:** [public/brand.json](public/brand.json) (product, operator and airport names, accent colour,
-  default language) is loaded at start-up. In Docker, mount a replacement over `/srv/brand.json` to rebrand
-  without rebuilding.
+  default language) is loaded at start-up; replace `brand.json` in the deployed `dist/` to rebrand without
+  rebuilding.
 - **Phones:** the claim page is a mobile layout that needs no app and no personal data.
 
 ## Stack and why
 
-| Layer   | Choice                                                 | Why                                                                                                   |
-| ------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| UI      | React 19, TypeScript                                   | Typed views over the backend's JSON; few dependencies (react, react-dom and a QR encoder)             |
-| Build   | Vite 8                                                 | Fast builds; the dev proxy for `/api` makes development match production's single origin              |
-| Styling | Plain CSS with design tokens, SVG charts               | Full control of the design system, dark/light themes and right-to-left layout without a CSS framework |
-| Server  | Caddy 2 (static files, reverse proxy, automatic HTTPS) | One small binary: serves the app with security headers, streams SSE, obtains certificates by itself   |
-| Tests   | Vitest                                                 | Router, role registry, airport-time formatting, clock extrapolation, brand validation, translations   |
+| Layer   | Choice                                   | Why                                                                                                   |
+| ------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| UI      | React 19, TypeScript                     | Typed views over the backend's JSON; few dependencies (react, react-dom and a QR encoder)             |
+| Build   | Vite 8                                   | Fast builds; the dev proxy for `/api` makes development match production's single origin              |
+| Styling | Plain CSS with design tokens, SVG charts | Full control of the design system, dark/light themes and right-to-left layout without a CSS framework |
+| Tests   | Vitest                                   | Router, role registry, airport-time formatting, clock extrapolation, brand validation, translations   |
 
 ## Quality
 
@@ -113,11 +119,28 @@ side by side under one clock.
   (`trivy fs --scanners vuln,secret,misconfig,license` and `opengrep --config=r/all`); neither reports anything
   above INFO. Dependencies are pinned; pnpm installs only versions public for at least 7 days, blocks
   non-registry sub-dependencies and refuses trust downgrades.
-- **Serving:** pages carry a Content-Security-Policy (`script-src 'self'`, no inline scripts), `nosniff`, a
-  strict referrer policy and `frame-ancestors 'none'`; hashed assets are cached for a year, pages revalidate.
-  The container runs as a non-root user on a read-only file system with every Linux capability dropped.
+- **No inline scripts:** the build works under a strict Content-Security-Policy (`script-src 'self'`).
 
-## CI/CD and deployment
+## Hosting
+
+The Docker image above is the easy way to run the app. To host the build with your own web server instead
+(e.g. nginx), `pnpm build` → `dist/` (static files) and the web server needs to:
+
+1. **Serve `dist/`**, and answer every path that is not a file with `index.html` (client-side routes such as
+   `/claim/<token>`, `/report/<id>`, `/retailer/campaigns`).
+2. **Forward `/api/`** to the backend (for example `http://127.0.0.1:3000`), keeping the request path, with:
+   - response buffering **off** and a long read timeout (at least 1 hour): `/api/stream` is a Server-Sent
+     Events stream that must reach the browser message by message;
+   - the original `Host` header and `X-Forwarded-Proto` (the backend builds the QR claim links from them;
+     set the backend's `TRUST_PROXY` so it trusts this server).
+3. **Serve HTTPS** for the public domain.
+
+Recommended: cache `assets/*` for a year (file names are content-hashed), `index.html` with `no-cache`, and
+send `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';
+img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self';
+frame-ancestors 'none'` plus `X-Content-Type-Options: nosniff`.
+
+## CI
 
 One workflow, [.github/workflows/ci.yml](.github/workflows/ci.yml):
 
@@ -125,12 +148,7 @@ One workflow, [.github/workflows/ci.yml](.github/workflows/ci.yml):
 | ---------- | ----------------- | ---------------------------------------------------------------------------------------------------------------- |
 | `verify`   | every push and PR | install (frozen lockfile), build, typecheck, lint, format check, tests                                           |
 | `security` | every push and PR | the reviewers' Trivy and OpenGrep commands (pinned, checksum-verified scanners); fails on any finding above INFO |
-| `image`    | push to `main`    | builds the image and pushes `ghcr.io/<owner>/<repo>:<commit>` and `:latest`                                      |
-| `deploy`   | after `image`     | runs that image, pinned by digest, on the VPS over SSH and waits until it is healthy                             |
-
-On the VPS this image is the only container with public ports (80 and 443, automatic HTTPS when
-`SITE_ADDRESS` is a domain); it reaches the backend as `api:8080` on the `arm-edge` network. Setup, GitHub
-variables and secrets, and rollback: [docs/deployment.md](docs/deployment.md).
+| `build`    | push to `main`    | the production build, kept as the workflow artifact `web-dist-<commit>` (the `dist/` folder to host)             |
 
 ## Repository layout
 
@@ -145,7 +163,5 @@ variables and secrets, and rollback: [docs/deployment.md](docs/deployment.md).
 | `src/i18n`     | English and Arabic messages                                                 |
 | `src/styles`   | Design tokens and styles                                                    |
 | `public/`      | `brand.json` (white label), favicon                                         |
-| `Caddyfile`    | The production server: static files, `/api` reverse proxy, security headers |
-| `deploy/`      | Production compose file                                                     |
-| `scripts/`     | `scan.sh` (the reviewers' scanners), `install-scanners.sh`, `deploy.sh`     |
-| `docs/`        | Demo script, deployment                                                     |
+| `scripts/`     | `scan.sh` (the reviewers' scanners), `install-scanners.sh`                  |
+| `docs/`        | Demo script                                                                 |

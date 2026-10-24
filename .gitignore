@@ -1,0 +1,18 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+*.log
+
+# scanner reports and tools (regenerate with scripts/scan.sh, scripts/install-scanners.sh)
+trivy-results.json
+opengrep-results.json
+.scan/
+.tools/
+
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,12 @@
+**/node_modules
+**/dist
+**/*.log
+.git
+.github
+.scan
+deploy
+test
+scripts
+*.md
+.env
+.env.*

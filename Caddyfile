@@ -1,0 +1,41 @@
+# Serves the built web app and forwards /api (REST and the SSE live stream) to the backend, so the browser
+# only ever talks to one origin: no CORS, and QR claim links work wherever the page was opened.
+#
+#   SITE_ADDRESS   ":80" (default, plain HTTP) or a domain name such as "arm.example.com" for automatic HTTPS
+#                  (Caddy then also listens on 443 and redirects HTTP to HTTPS)
+#   API_UPSTREAM   the backend's address on the Docker network (default "api:8080")
+{
+	admin off
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+{$SITE_ADDRESS::80} {
+	encode zstd gzip
+
+	handle /api/* {
+		reverse_proxy {$API_UPSTREAM:api:8080} {
+			# Server-Sent Events: pass every message through at once.
+			flush_interval -1
+		}
+	}
+
+	handle {
+		root * /srv
+		header {
+			Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+			X-Content-Type-Options nosniff
+			Referrer-Policy no-referrer
+			Permissions-Policy "camera=(), microphone=(), geolocation=()"
+			-Server
+		}
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+		@pages not path /assets/*
+		header @pages Cache-Control "no-cache"
+		# Client-side routes (/claim/<token>, /report/<id>, /split, ...) all load index.html.
+		try_files {path} /index.html
+		file_server
+	}
+}

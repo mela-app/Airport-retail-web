@@ -1,0 +1,10 @@
+{
+  "productName": "Meridian Media",
+  "operatorName": "Meridian Airport Company",
+  "airportName": "Meridian International",
+  "airportCode": "MQI",
+  "accent": "#2a78d6",
+  "accentInk": "#ffffff",
+  "defaultLanguage": "en",
+  "languages": ["en", "ar"]
+}

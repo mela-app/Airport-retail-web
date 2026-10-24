@@ -1,0 +1,127 @@
+/*
+ * Design tokens. Two themes share one set of roles:
+ *   light – business views (retailer, media manager, airline, passenger)
+ *   dark  – the admin "control room", and the demo chrome (header + simulation bar)
+ * A theme is scoped by `data-theme` on any element, so the two panes of split-screen mode can differ.
+ * The brand accent comes from brand.json (white-label); everything else derives from it.
+ * Chart colours follow a colour-vision-checked categorical order; status colours are reserved for state.
+ */
+:root {
+  --brand-accent: #2a78d6;
+  --brand-accent-ink: #ffffff;
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Arabic', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --text-xs: 11px;
+  --text-sm: 12.5px;
+  --text-md: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 26px;
+  --text-3xl: 34px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+  --status-critical: #d03b3b;
+
+  --header-h: 56px;
+  --simbar-h: 56px;
+  --content-max: 1680px;
+}
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+  --page: #f4f4f1;
+  --surface: #fcfcfb;
+  --surface-raised: #ffffff;
+  --surface-sunken: #eeeeea;
+  --text: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #6f6d68;
+  --border: rgba(11, 11, 11, 0.1);
+  --border-strong: rgba(11, 11, 11, 0.2);
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --hover: rgba(11, 11, 11, 0.05);
+  --shadow: 0 1px 2px rgba(11, 11, 11, 0.06), 0 2px 8px rgba(11, 11, 11, 0.04);
+  --shadow-pop: 0 8px 32px rgba(11, 11, 11, 0.18);
+  --accent: var(--brand-accent);
+  --accent-ink: var(--brand-accent-ink);
+  --accent-soft: color-mix(in srgb, var(--brand-accent) 12%, transparent);
+  --accent-text: color-mix(in srgb, var(--brand-accent) 82%, #000);
+  --success-text: #006300;
+  --danger-text: #b42828;
+  --warning-text: #8a5a00;
+
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #6250d6;
+  --series-8: #e34948;
+  --seq-1: #cde2fb;
+  --seq-2: #9ec5f4;
+  --seq-3: #6da7ec;
+  --seq-4: #3987e5;
+  --seq-5: #256abf;
+  --seq-6: #184f95;
+  --seq-7: #0d366b;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --surface-raised: #222220;
+  --surface-sunken: #121211;
+  --text: #f0efec;
+  --text-secondary: #c3c2b7;
+  --text-muted: #9a988f;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --hover: rgba(255, 255, 255, 0.06);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-pop: 0 12px 40px rgba(0, 0, 0, 0.55);
+  --accent: color-mix(in srgb, var(--brand-accent) 85%, #fff);
+  --accent-ink: var(--brand-accent-ink);
+  --accent-soft: color-mix(in srgb, var(--brand-accent) 22%, transparent);
+  --accent-text: color-mix(in srgb, var(--brand-accent) 55%, #fff);
+  --success-text: #2fc42f;
+  --danger-text: #ff7a7a;
+  --warning-text: #fab219;
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+  --seq-1: #104281;
+  --seq-2: #184f95;
+  --seq-3: #1c5cab;
+  --seq-4: #2a78d6;
+  --seq-5: #5598e7;
+  --seq-6: #86b6ef;
+  --seq-7: #cde2fb;
+}

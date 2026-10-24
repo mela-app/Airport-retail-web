@@ -1,0 +1,199 @@
+/*
+ * Creatives. Everything is sized in container units (cqmin = the smaller side of the creative), so a creative
+ * looks the same full-screen, on a phone and as a thumbnail.
+ */
+.creative {
+  container-type: size;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: grid;
+  background: var(--cr-bg);
+  color: var(--cr-fg);
+  font-family: var(--font-sans);
+  isolation: isolate;
+}
+.creative__media {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+}
+.creative__art {
+  width: 78%;
+  height: 78%;
+}
+.creative__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2.6cqmin;
+  padding: 7cqmin;
+  min-width: 0;
+}
+.creative__badge {
+  display: inline-block;
+  padding: 1.2cqmin 3cqmin;
+  border-radius: 999px;
+  background: var(--cr-accent);
+  color: var(--cr-bg);
+  font-weight: 800;
+  font-size: 4.2cqmin;
+  letter-spacing: 0.02em;
+}
+.creative__headline {
+  font-size: 9.5cqmin;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.creative__body {
+  font-size: 4.3cqmin;
+  line-height: 1.3;
+  opacity: 0.88;
+  max-width: 60ch;
+  text-wrap: pretty;
+}
+.creative__cta {
+  margin-top: 1cqmin;
+  padding: 1.8cqmin 3.6cqmin;
+  border-radius: 1.6cqmin;
+  border: 0.5cqmin solid var(--cr-accent);
+  color: var(--cr-accent);
+  font-weight: 750;
+  font-size: 4cqmin;
+}
+.creative__overlay {
+  position: absolute;
+  inset-block-end: 4cqmin;
+  inset-inline-end: 4cqmin;
+  z-index: 2;
+}
+
+/* ---- offer_split: copy beside (landscape) or below (portrait) an accent art panel --------------------- */
+.creative--offer_split.creative--landscape {
+  grid-template-columns: 1.15fr 1fr;
+}
+.creative--offer_split.creative--landscape .creative__media {
+  order: 2;
+  background: color-mix(in srgb, var(--cr-accent) 22%, var(--cr-bg));
+}
+.creative--offer_split.creative--portrait {
+  grid-template-rows: 1fr 1.1fr;
+}
+.creative--offer_split.creative--portrait .creative__media {
+  background: color-mix(in srgb, var(--cr-accent) 22%, var(--cr-bg));
+}
+
+/* ---- hero_full: the art fills the frame, copy on a gradient ------------------------------------------- */
+.creative--hero_full .creative__media {
+  grid-area: 1 / 1;
+}
+.creative--hero_full .creative__art {
+  width: 100%;
+  height: 100%;
+  opacity: 0.55;
+  transform: scale(1.15);
+}
+.creative--hero_full .creative__copy {
+  grid-area: 1 / 1;
+  z-index: 1;
+  justify-content: flex-end;
+  background: linear-gradient(to top, var(--cr-bg) 15%, transparent 75%);
+}
+.creative--hero_full .creative__headline {
+  font-size: 11cqmin;
+}
+
+/* ---- gate_message: an airline notice; accent rule, art as a small mark -------------------------------- */
+.creative--gate_message {
+  grid-template-columns: 1fr;
+  border-inline-start: 2.6cqmin solid var(--cr-accent);
+}
+.creative--gate_message .creative__media {
+  position: absolute;
+  inset-block-start: 5cqmin;
+  inset-inline-end: 5cqmin;
+  width: 22cqmin;
+  height: 22cqmin;
+}
+.creative--gate_message .creative__art {
+  width: 100%;
+  height: 100%;
+}
+.creative--gate_message .creative__copy {
+  padding-inline-end: 30cqmin;
+}
+
+/* ---- voucher: a ticket in the middle ------------------------------------------------------------------- */
+.creative--voucher {
+  place-items: center;
+  grid-template-columns: 1fr;
+  background: radial-gradient(
+    circle at 30% 20%,
+    color-mix(in srgb, var(--cr-accent) 25%, var(--cr-bg)),
+    var(--cr-bg) 70%
+  );
+}
+.creative--voucher .creative__media {
+  position: absolute;
+  inset: auto auto 4cqmin 4cqmin;
+  width: 24cqmin;
+  height: 24cqmin;
+  opacity: 0.8;
+}
+.creative--voucher .creative__copy {
+  align-items: center;
+  text-align: center;
+  width: 82%;
+  padding: 6cqmin;
+  border: 0.6cqmin dashed var(--cr-accent);
+  border-radius: 4cqmin;
+  background: color-mix(in srgb, var(--cr-bg) 70%, transparent);
+}
+
+/* ---- destination: skyline art with a large place name -------------------------------------------------- */
+.creative--destination.creative--landscape {
+  grid-template-columns: 1fr 1fr;
+}
+.creative--destination.creative--portrait {
+  grid-template-rows: 1fr 1fr;
+}
+.creative--destination .creative__media {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--cr-accent) 30%, var(--cr-bg)),
+    var(--cr-bg)
+  );
+}
+.creative--destination .creative__art {
+  width: 92%;
+  height: 92%;
+  align-self: end;
+}
+
+/* portrait: the copy reads better centred */
+.creative--portrait .creative__copy {
+  align-items: center;
+  text-align: center;
+}
+.creative--portrait .creative__headline {
+  font-size: 11cqmin;
+}
+.creative--portrait .creative__body {
+  font-size: 5cqmin;
+}
+
+/* portrait: the QR sits in a corner of the art panel, clear of the copy */
+.creative--portrait .creative__overlay {
+  inset-block-start: 4cqmin;
+  inset-block-end: auto;
+}
+.creative--portrait .creative__art {
+  width: 56%;
+  height: 56%;
+}

@@ -1,0 +1,39 @@
+# Local run: start the backend stack first (its repository: `docker compose up`), then `docker compose up` here
+# → http://localhost:8080. The web container joins the backend's `arm-edge` network and forwards /api to
+# `api:8080`. Production uses deploy/compose.yaml (the published image on ports 80 and 443).
+name: arm-web
+
+services:
+  web:
+    build: .
+    image: arm-web:local
+    environment:
+      API_UPSTREAM: api:8080
+    ports:
+      - target: 80
+        published: '8080'
+        host_ip: ${BIND_ADDRESS:-127.0.0.1}
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    sysctls:
+      net.ipv4.ip_unprivileged_port_start: 0
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - edge
+    restart: unless-stopped
+
+volumes:
+  caddy-data:
+  caddy-config:
+
+networks:
+  edge:
+    name: arm-edge
+    external: true

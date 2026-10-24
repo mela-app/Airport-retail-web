@@ -1,0 +1,169 @@
+/* The passenger's mobile claim page: one column, large touch targets, works from 320 px up. */
+.claim {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--page);
+  color: var(--text);
+}
+.claim__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: #121211;
+  color: #f0efec;
+}
+.claim__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+.claim__mark {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: var(--brand-accent);
+  color: var(--brand-accent-ink);
+}
+.claim__lang {
+  display: inline-flex;
+  gap: 2px;
+}
+.claim__lang button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #c3c2b7;
+}
+.claim__lang button.is-active {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-weight: 650;
+}
+.claim__main {
+  flex: 1;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+.claim__center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 50vh;
+  text-align: center;
+}
+.claim__notice h1 {
+  font-size: var(--text-xl);
+}
+.claim__offer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.claim__creative {
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.claim__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+.claim__advertiser {
+  font-size: var(--text-sm);
+  font-weight: 650;
+  color: var(--accent-text);
+}
+.claim__title {
+  font-size: var(--text-2xl);
+  line-height: 1.15;
+}
+.claim__validity,
+.claim__where {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+.claim__validity > span,
+.claim__where > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.claim__validity .icon {
+  color: var(--accent-text);
+  margin-top: 2px;
+}
+.claim__validity.is-expired .icon {
+  color: var(--danger-text);
+}
+.claim__countdown {
+  font-size: var(--text-xl);
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.claim__cta {
+  min-height: 52px;
+  font-size: var(--text-lg);
+  border-radius: var(--radius-md);
+}
+.claim__code-card {
+  align-items: center;
+  text-align: center;
+}
+.claim__code {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: var(--space-3) var(--space-4);
+  border: 2px dashed var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  word-break: break-all;
+}
+.claim__share,
+.claim__shared {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  width: 100%;
+}
+.claim__url {
+  font-size: var(--text-xs);
+  word-break: break-all;
+  color: var(--text-secondary);
+}
+.claim__error {
+  color: var(--danger-text);
+  font-size: var(--text-sm);
+}
+.claim__foot {
+  padding: var(--space-4);
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}

@@ -19,7 +19,8 @@ The app calls the backend on its own origin under `/api` (REST and the live even
 forwards it in development, and the web server that hosts the build does in production (see
 [Hosting](#hosting)). No CORS, and QR claim links work wherever the page is opened.
 
-**Playground:** _URL to be added after deployment_
+**Playground:** https://airportweb.kefta-ticket.com (press **Demo** in the top bar for the guided walkthrough) ·
+**API docs:** https://airportweb.kefta-ticket.com/api/docs
 
 ## Try it in five minutes
 

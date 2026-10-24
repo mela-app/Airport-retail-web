@@ -21,11 +21,14 @@ export function Popover({
   children,
   align = 'start',
   label,
+  panelClassName,
 }: {
   trigger: (props: { open: boolean; toggle: () => void; 'aria-expanded': boolean }) => ReactNode;
   children: (close: () => void) => ReactNode;
   align?: 'start' | 'end';
   label: string;
+  /** Extra class for the panel (e.g. `popover__panel--menu` for a compact menu). */
+  panelClassName?: string;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -49,7 +52,11 @@ export function Popover({
     <div className="popover" ref={ref}>
       {trigger({ open, toggle: () => setOpen((o) => !o), 'aria-expanded': open })}
       {open ? (
-        <div className={`popover__panel popover__panel--${align}`} role="dialog" aria-label={label}>
+        <div
+          className={['popover__panel', `popover__panel--${align}`, panelClassName].filter(Boolean).join(' ')}
+          role="dialog"
+          aria-label={label}
+        >
           {children(close)}
         </div>
       ) : null}

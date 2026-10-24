@@ -7,12 +7,13 @@ import { useEffect, useState } from 'react';
 
 import { useAppConfig } from '../../app/config';
 import { Creative } from '../../creative/creative';
-import { LANGUAGES, useI18n } from '../../i18n';
+import { useI18n } from '../../i18n';
 import { ApiError, api } from '../../lib/api';
 import { useSimClock } from '../../lib/clock';
 import { countdown } from '../../lib/format';
 import { readPref, writePref } from '../../lib/prefs';
 import type { ClaimLink, ClaimOffer, ClaimedCode } from '../../lib/types';
+import { LanguageMenu } from '../../shell/language-menu';
 import { Button } from '../../ui/controls';
 import { Spinner } from '../../ui/display';
 import { Icon } from '../../ui/icon';
@@ -142,7 +143,6 @@ export function ClaimPage({ token }: { token: string }) {
 
 function ClaimHeader() {
   const { brand } = useAppConfig();
-  const { lang, setLang } = useI18n();
   return (
     <header className="claim__head">
       <span className="claim__brand">
@@ -153,20 +153,7 @@ function ClaimHeader() {
           <strong>{brand.airportName}</strong>
         </span>
       </span>
-      <span className="claim__lang">
-        {LANGUAGES.map((l) => (
-          <button
-            key={l.id}
-            type="button"
-            lang={l.id}
-            aria-pressed={l.id === lang}
-            className={l.id === lang ? 'is-active' : undefined}
-            onClick={() => setLang(l.id)}
-          >
-            {l.label}
-          </button>
-        ))}
-      </span>
+      <LanguageMenu tone="dark" />
     </header>
   );
 }

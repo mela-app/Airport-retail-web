@@ -4,11 +4,11 @@
 name: arm-web
 
 services:
-  web:
+  airport-web:
     build: .
-    image: arm-web:local
+    image: ghcr.io/${REPO_OWNER:-mela-app}/airport-web:${IMAGE_TAG:-latest}
     environment:
-      API_UPSTREAM: api:8080
+      API_UPSTREAM: airport-api:8080
     ports:
       - target: 80
         published: '8080'

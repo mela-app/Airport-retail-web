@@ -1,13 +1,15 @@
-# Local run: start the backend stack first (its repository: `docker compose up`), then `docker compose up` here
-# → http://localhost:8080. The web container joins the backend's `arm-edge` network and forwards /api to
-# `api:8080`. Production uses deploy/compose.yaml (the published image on ports 80 and 443).
-name: arm-web
 
 services:
-  airport-web:
-    build: .
+  mela-web:
+    # `image` + `build` together means `docker compose build` tags the local
+    # image with this name, while the deploy host can `docker compose pull`
+    # the exact artifact CD pushed to GHCR.
     image: ghcr.io/${REPO_OWNER:-mela-app}/airport-web:${IMAGE_TAG:-latest}
-    environment:
-      API_UPSTREAM: airport-api:8080
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-        - '${WEB_PORT:-8081}:80'
+      # Default is 8081, not 8080, so it can coexist with another stack on the
+      # same host. The reverse proxy for guzo.elshadayet.com forwards here.
+      - '${WEB_PORT:-8081}:80'
+    restart: unless-stopped

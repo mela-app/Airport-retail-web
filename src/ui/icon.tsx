@@ -72,6 +72,7 @@ const PATHS = new Map<string, ReactNode>([
   ],
   ['check', <path key="p" d="M5 12.5l4.5 4.5L19 7.5" />],
   ['x', <path key="p" d="M6 6l12 12M18 6L6 18" />],
+  ['menu', <path key="p" d="M4 7h16M4 12h16M4 17h16" />],
   ['chevron-down', <path key="p" d="M6 9.5l6 6 6-6" />],
   ['chevron-right', <path key="p" d="M9.5 6l6 6-6 6" />],
   [
@@ -219,6 +220,7 @@ const PATHS = new Map<string, ReactNode>([
 ]);
 
 export type IconName =
+  | 'menu'
   | 'play'
   | 'pause'
   | 'clock'

@@ -34,6 +34,8 @@ export const ar: Record<MessageKey, string> = {
 
   'shell.header.company': 'الشركة',
   'shell.header.language': 'اللغة',
+  'shell.header.menu': 'القائمة',
+  'shell.header.roles': 'الأدوار',
   'shell.header.split': 'شاشة مقسومة',
   'shell.header.exitSplit': 'عرض واحد',
   'shell.header.apiDocs': 'توثيق الواجهة البرمجية',

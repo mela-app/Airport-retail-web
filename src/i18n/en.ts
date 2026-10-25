@@ -32,6 +32,8 @@ export const en = {
 
   'shell.header.company': 'Company',
   'shell.header.language': 'Language',
+  'shell.header.menu': 'Menu',
+  'shell.header.roles': 'Roles',
   'shell.header.split': 'Split screen',
   'shell.header.exitSplit': 'Single view',
   'shell.header.apiDocs': 'API docs',

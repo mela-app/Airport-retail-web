@@ -141,15 +141,17 @@ send `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 
 img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self';
 frame-ancestors 'none'` plus `X-Content-Type-Options: nosniff`.
 
-## CI
+## CI/CD
 
-One workflow, [.github/workflows/ci.yml](.github/workflows/ci.yml):
+Two workflows:
 
-| Job        | When              | What                                                                                                             |
-| ---------- | ----------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `verify`   | every push and PR | install (frozen lockfile), build, typecheck, lint, format check, tests                                           |
-| `security` | every push and PR | the reviewers' Trivy and OpenGrep commands (pinned, checksum-verified scanners); fails on any finding above INFO |
-| `build`    | push to `main`    | the production build, kept as the workflow artifact `web-dist-<commit>` (the `dist/` folder to host)             |
+| Workflow                           | When                       | What                                                                                                                                                                                                                                          |
+| ---------------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [ci.yml](.github/workflows/ci.yml) | every pull request         | install (frozen lockfile), build, typecheck, lint, format check, tests                                                                                                                                                                        |
+| [cd.yml](.github/workflows/cd.yml) | push to `main`, or by hand | builds the image and pushes `ghcr.io/<owner>/airport-web:latest` and `:<commit>`, then over SSH runs `docker compose pull` and `up -d` in the server's deploy folder (secrets `SERVER_HOST`, `SERVER_USER`, `SERVER_PASSWORD`, `DEPLOY_PATH`) |
+
+Actions are pinned to commit SHAs. The security scans are run with `bash scripts/scan.sh` (the reviewers' exact
+Trivy and OpenGrep commands on a clean export; `scripts/install-scanners.sh` installs the pinned scanners).
 
 ## Repository layout
 

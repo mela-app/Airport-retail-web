@@ -1,12 +1,8 @@
 # CI/CD for the frontend.
 #
-#   pull request / any push   verify (build, typecheck, lint, format, tests) and security (Trivy + OpenGrep)
-#   push to main              + image: build and push ghcr.io/<owner>/<repo>:<commit> (and :latest)
-#                             + deploy: run that image (pinned by digest) on the VPS over SSH
+#   every pull request   install, build, typecheck, lint, format check and tests
 #
-# Deploy is skipped until the repository has the variables VPS_HOST and VPS_USER and the secrets VPS_SSH_KEY and
-# VPS_KNOWN_HOSTS (see docs/deployment.md). It runs in the "production" environment, so protection rules such as
-# required reviewers can be added there.
+# Deployment is .github/workflows/cd.yml (push to main); security scans: bash scripts/scan.sh.
 name: CI
 on:
   pull_request:
